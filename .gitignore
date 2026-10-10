@@ -24,6 +24,7 @@ coverage/
 .env
 .env.local
 .env.*.local
+.npmrc
 
 # OS junk files
 .DS_Store

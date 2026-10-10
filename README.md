@@ -83,6 +83,17 @@ npm run fmt
 npm test
 ```
 
+## Publishing
+
+Authenticate with npm once, then bump the package version and publish the built package:
+
+```bash
+npm login
+npm version patch # or: minor / major
+npm run build
+npm publish
+```
+
 ## License
 
 MIT
