@@ -23,6 +23,25 @@
     "test": "node --import tsx --test test/**/*.test.ts",
     "fmt": "prettier --write . && eslint . --fix"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nojacko/sm-uuid.git"
+  },
+  "author": "James Jackson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nojacko/sm-uuid/issues"
+  },
+  "homepage": "https://github.com/nojacko/sm-uuid",
+  "keywords": [
+    "uuid",
+    "uuidv7",
+    "uuidv4",
+    "base62",
+    "url-safe",
+    "profanity-filter",
+    "guid"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "@types/node": "^26.6.5",
