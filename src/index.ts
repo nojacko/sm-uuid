@@ -1,4 +1,5 @@
-const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const ALPHABET =
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const BASE = 62n;
 const TARGET_LEN = 22;
 
@@ -85,7 +86,9 @@ function bigIntToBase62(value: bigint): string {
 
 function base62ToBigInt(encoded: string): bigint {
   if (encoded.length !== TARGET_LEN) {
-    throw new Error(`Invalid encoded length: expected ${TARGET_LEN} characters`);
+    throw new Error(
+      `Invalid encoded length: expected ${TARGET_LEN} characters`,
+    );
   }
   let value = 0n;
   for (let i = 0; i < encoded.length; i++) {

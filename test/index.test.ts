@@ -49,16 +49,16 @@ describe('sm-uuid', () => {
         ['nazi', ['nazi', 'n4z1', 'NAZI', 'N4Z1']],
       ];
 
-      for (const [word, variants] of TEST_CASES) {
-          for (const variant of variants) {
-            // Embedded in a mock 22-char Base62 string to mirror real UUID checks
-            const embeddedStr = `040${variant}0000000000000000`.slice(0, 22);
-            assert.equal(
-              uuidProfanityCheck(embeddedStr),
-              true,
-              `Failed to catch variant: "${variant}" in "${embeddedStr}"`
-            );
-          }
+      for (const [, variants] of TEST_CASES) {
+        for (const variant of variants) {
+          // Embedded in a mock 22-char Base62 string to mirror real UUID checks
+          const embeddedStr = `040${variant}0000000000000000`.slice(0, 22);
+          assert.equal(
+            uuidProfanityCheck(embeddedStr),
+            true,
+            `Failed to catch variant: "${variant}" in "${embeddedStr}"`,
+          );
+        }
       }
     });
 
@@ -72,14 +72,20 @@ describe('sm-uuid', () => {
   describe('uuidV4', () => {
     it('should generate valid standard UUID v4 strings', () => {
       const v4 = uuidV4();
-      assert.match(v4, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+      assert.match(
+        v4,
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      );
     });
   });
 
   describe('uuidV7', () => {
     it('should generate valid standard UUID v7 strings', () => {
       const v7 = uuidV7();
-      assert.match(v7, /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+      assert.match(
+        v7,
+        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      );
     });
   });
 
@@ -114,20 +120,26 @@ describe('sm-uuid', () => {
 
     it('should throw error when decoding invalid length string', () => {
       assert.throws(() => uuidDecode('too-short'), /Invalid encoded length/);
-      assert.throws(() => uuidDecode('01234567890123456789012'), /Invalid encoded length/);
+      assert.throws(
+        () => uuidDecode('01234567890123456789012'),
+        /Invalid encoded length/,
+      );
     });
 
     it('should throw error when decoding invalid Base62 character', () => {
-      assert.throws(() => uuidDecode('040JcVpU9fE0000000000!'), /Invalid Base62 character/);
+      assert.throws(
+        () => uuidDecode('040JcVpU9fE0000000000!'),
+        /Invalid Base62 character/,
+      );
     });
 
     it('should encode the maximum theoretical UUID to exactly 22 characters', () => {
-  const maxUuid = 'ffffffff-ffff-ffff-ffff-ffffffffffff';
-  const encoded = uuidEncode(maxUuid);
+      const maxUuid = 'ffffffff-ffff-ffff-ffff-ffffffffffff';
+      const encoded = uuidEncode(maxUuid);
 
-  assert.equal(encoded.length, 22, encoded);
-  assert.equal(uuidDecode(encoded).toLowerCase(), maxUuid.toLowerCase());
-});
+      assert.equal(encoded.length, 22, encoded);
+      assert.equal(uuidDecode(encoded).toLowerCase(), maxUuid.toLowerCase());
+    });
   });
 
   describe('smUuidV4', () => {
@@ -137,7 +149,10 @@ describe('sm-uuid', () => {
       assert.equal(uuidProfanityCheck(encoded), false);
 
       const decoded = uuidDecode(encoded);
-      assert.match(decoded, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+      assert.match(
+        decoded,
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      );
     });
   });
 
@@ -148,14 +163,14 @@ describe('sm-uuid', () => {
       assert.equal(uuidProfanityCheck(encoded), false);
     });
 
-it('should maintain chronological lexicographical sort order', async () => {
-  const enc1 = smUuidV7();
-  await new Promise((resolve) => setTimeout(resolve, 2));
-  const enc2 = smUuidV7();
+    it('should maintain chronological lexicographical sort order', async () => {
+      const enc1 = smUuidV7();
+      await new Promise((resolve) => setTimeout(resolve, 2));
+      const enc2 = smUuidV7();
 
-  assert.equal(enc1.length, 22);
-  assert.equal(enc2.length, 22);
-  assert.ok(enc1 < enc2);
-});
+      assert.equal(enc1.length, 22);
+      assert.equal(enc2.length, 22);
+      assert.ok(enc1 < enc2);
+    });
   });
 });

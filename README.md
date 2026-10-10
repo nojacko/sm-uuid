@@ -27,7 +27,7 @@ import {
   uuidEncode,
   uuidDecode,
   smUuidV4,
-  smUuidV7
+  smUuidV7,
 } from 'sm-uuid';
 
 // 1. Generate 22-character profanity-safe Base62 UUIDs (Recommended)
@@ -39,7 +39,7 @@ const standardV7 = uuidV7(); // "018e28f8-a000-7000-8000-000000000001"
 const standardV4 = uuidV4(); // "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
 // 3. Encode & Decode Base62 strings
-const encoded = uuidEncode("018e28f8-a000-7000-8000-000000000001");
+const encoded = uuidEncode('018e28f8-a000-7000-8000-000000000001');
 // -> "040JcVpU9fE00000000001"
 
 const decoded = uuidDecode(encoded);
@@ -67,15 +67,17 @@ This ensures generation completes in under a microsecond without high-CPU retry 
 
 ### Build Package
 
-Compiles TypeScript into ESM (`./dist/esm`) and CJS (`./dist/cjs`) outputs:
-
 ```bash
 npm run build
 ```
 
-### Run Tests
+### Lint / Formatting
 
-Executes the native Node.js test runner using `tsx`:
+```bash
+npm run fmt
+```
+
+### Run Tests
 
 ```bash
 npm test
