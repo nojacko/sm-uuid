@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="sm-uuid: compact, sortable Base62 UUIDs for browsers and Node.js."
+    />
+    <title>sm-uuid | Compact sortable UUIDs</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #edf4ee;
+        --muted: #9eafa5;
+        --paper: #101816;
+        --panel: #18231f;
+        --line: #304039;
+        --accent: #f28356;
+        --accent-dark: #ffab83;
+        --green: #72d1b3;
+        --shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font: 16px/1.6 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      main { width: min(1040px, calc(100% - 40px)); margin: 0 auto; }
+      header { padding: 88px 0 54px; max-width: 720px; }
+      .eyebrow {
+        color: var(--accent-dark);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      h1, h2 { margin: 0; letter-spacing: -0.04em; line-height: 1.05; }
+      h1 { margin-top: 14px; font: 700 clamp(3.5rem, 10vw, 6.8rem)/0.9 Georgia, "Times New Roman", serif; }
+      .intro { margin: 26px 0 0; color: var(--muted); font-size: 1.13rem; max-width: 620px; }
+      .intro code, code { color: var(--green); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .project-links { display: flex; gap: 18px; margin-top: 20px; }
+      .project-links a { color: var(--green); font-weight: 700; }
+      .demos { padding-bottom: 84px; }
+      .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 18px; }
+      h2 { font-size: clamp(1.8rem, 4vw, 2.55rem); }
+      .section-heading p { color: var(--muted); margin: 0; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+      .demo {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        padding: 24px;
+      }
+      .demo-wide { grid-column: 1 / -1; }
+      .demo h3 { margin: 0; font-size: 1.05rem; }
+      .demo p { color: var(--muted); margin: 7px 0 18px; font-size: 0.93rem; }
+      .result {
+        display: flex;
+        align-items: center;
+        min-height: 52px;
+        overflow-wrap: anywhere;
+        padding: 12px 14px;
+        color: var(--ink);
+        background: #111b18;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        font: 0.94rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .result-row { display: flex; align-items: stretch; gap: 9px; }
+      .result-row .result { flex: 1; }
+      .result-row button { height: 44px; white-space: nowrap; }
+      [data-action="encode"], [data-copy="encode-result"] { width: 88px; }
+      [data-action="decode"], [data-copy="decode-result"] { width: 88px; }
+      .result:empty::before { content: "Tap check"; color: #72857a; font-family: inherit; }
+      .result-generate:empty::before { content: "Tap generate"; }
+      .result-encode:empty::before { content: "Tap encode"; }
+      .result-decode:empty::before { content: "Tap decode"; }
+      .result.error { color: var(--accent-dark); background: #291d1a; }
+      .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
+      input, button { box-sizing: border-box; height: 44px; padding: 9px 13px; }
+      button {
+        border: 1px solid var(--ink);
+        border-radius: 4px;
+        color: #111816;
+        background: var(--accent);
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.9rem;
+      }
+      button:hover { background: #ff9b72; }
+      button.secondary { color: var(--ink); background: transparent; }
+      button.secondary:hover { background: #24342d; }
+      label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 0.85rem; font-weight: 700; }
+      .field-label { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 7px; }
+      .field-label label { margin-bottom: 0; }
+      .field-label button { flex: 0 0 88px; }
+      .input-row { display: grid; grid-template-columns: 1fr auto; gap: 9px; margin-bottom: 10px; }
+      input {
+        width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 4px;
+        color: var(--ink); background: #111b18; font: 0.92rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      input:focus, button:focus-visible { outline: 3px solid rgba(216, 93, 50, 0.3); outline-offset: 2px; }
+      footer { border-top: 1px solid var(--line); padding: 24px 0 40px; color: var(--muted); font-size: 0.86rem; text-align: center; }
+      footer a { color: var(--green); }
+      @media (max-width: 700px) {
+        main { width: min(100% - 28px, 560px); }
+        header { padding-top: 54px; }
+        .grid { grid-template-columns: 1fr; }
+        .demo-wide { grid-column: auto; }
+        .section-heading { display: block; }
+        .section-heading p { margin-top: 8px; }
+      }
+    </style>
+
+    <script>
+      window.module = { exports: {} };
+      window.exports = window.module.exports;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sm-uuid@0.3.0/dist/cjs/index.js"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>sm-uuid</h1>
+        <p class="intro">
+          Zero-dependency UUID v7 and v4 generators that pack full 128-bit UUIDs into
+          compact, URL-safe Base62 strings. The safe generators filter profanity and
+          keep v7 IDs sortable by time.
+        </p>
+        <nav class="project-links" aria-label="Project links">
+          <a href="https://github.com/nojacko/sm-uuid">GitHub</a>
+          <a href="https://www.npmjs.com/package/sm-uuid">npm</a>
+        </nav>
+      </header>
+
+      <section class="demos" aria-labelledby="demo-title">
+        <div class="section-heading">
+          <h2 id="demo-title">Live Demo</h2>
+        </div>
+        <div class="grid">
+          <article class="demo">
+            <h3>Safe UUID v7</h3>
+            <p>Time-sortable, 22-character Base62 IDs with profanity protection.</p>
+            <output class="result result-generate" id="v7-result" aria-live="polite"></output>
+            <div class="actions">
+              <button type="button" data-action="v7">Generate v7</button>
+              <button type="button" class="secondary" data-copy="v7-result">Copy</button>
+            </div>
+          </article>
+
+          <article class="demo">
+            <h3>Safe UUID v4</h3>
+            <p>Random, compact IDs with the same built-in profanity protection.</p>
+            <output class="result result-generate" id="v4-result" aria-live="polite"></output>
+            <div class="actions">
+              <button type="button" data-action="v4">Generate v4</button>
+              <button type="button" class="secondary" data-copy="v4-result">Copy</button>
+            </div>
+          </article>
+
+          <article class="demo">
+            <h3>Encode a UUID</h3>
+            <p>Turn a standard UUID into a fixed 22-character Base62 string.</p>
+            <div class="field-label">
+              <label for="uuid-input">UUID to encode</label>
+              <button type="button" class="secondary" data-action="random-encode">Random</button>
+            </div>
+            <div class="input-row">
+              <input id="uuid-input" value="018e28f8-a000-7000-8000-000000000001" maxlength="36" spellcheck="false" />
+              <button type="button" data-action="encode">Encode</button>
+            </div>
+            <div class="result-row">
+              <output class="result result-encode" id="encode-result" aria-live="polite"></output>
+              <button type="button" class="secondary" data-copy="encode-result">Copy</button>
+            </div>
+          </article>
+
+          <article class="demo">
+            <h3>Decode a Base62 ID</h3>
+            <p>Expand a 22-character Base62 string back into a standard UUID.</p>
+            <div class="field-label">
+              <label for="base62-input">Base62 ID to decode</label>
+              <button type="button" class="secondary" data-action="random-decode">Random</button>
+            </div>
+            <div class="input-row">
+              <input id="base62-input" value="02vxUt7LDxSTnHk3E33lg1" maxlength="22" spellcheck="false" />
+              <button type="button" data-action="decode">Decode</button>
+            </div>
+            <div class="result-row">
+              <output class="result result-decode" id="decode-result" aria-live="polite"></output>
+              <button type="button" class="secondary" data-copy="decode-result">Copy</button>
+            </div>
+          </article>
+
+          <article class="demo demo-wide">
+            <h3>Profanity check</h3>
+            <p>Inspect any string with the same targeted filter used by the safe generators.</p>
+            <label for="check-input">String to check</label>
+            <div class="input-row">
+              <input id="check-input" value="00000000sh1t0000000000" maxlength="22" spellcheck="false" />
+              <button type="button" data-action="check">Check</button>
+            </div>
+            <output class="result" id="check-result" aria-live="polite"></output>
+          </article>
+        </div>
+        <nav class="project-links" aria-label="Project links">
+          <a href="https://github.com/nojacko/sm-uuid">GitHub</a>
+          <a href="https://www.npmjs.com/package/sm-uuid">npm</a>
+        </nav>
+      </section>
+
+      <footer>
+        <a href="https://github.com/nojacko/sm-uuid">sm-uuid on GitHub</a> · MIT licensed
+        <br />Made with love ❤️, experience 🤓, and AI 🤖 in the UK 🇬🇧
+      </footer>
+    </main>
+
+    <script>
+      const api = window.module.exports;
+      const result = (id) => document.getElementById(id);
+
+      function show(id, value, isError = false) {
+        const element = result(id);
+        element.textContent = value;
+        element.classList.toggle('error', isError);
+      }
+
+      function run(id, operation) {
+        try {
+          show(id, operation());
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          show(id, message.replace(/^Invalid UUID string:.*$/, 'Invalid UUID'), true);
+        }
+      }
+
+      document.querySelector('[data-action="v7"]').addEventListener('click', () => run('v7-result', api.smUuidV7));
+      document.querySelector('[data-action="v4"]').addEventListener('click', () => run('v4-result', api.smUuidV4));
+      document.querySelector('[data-action="encode"]').addEventListener('click', () => run('encode-result', () => api.smUuidEncode(document.getElementById('uuid-input').value.trim())));
+      document.querySelector('[data-action="decode"]').addEventListener('click', () => run('decode-result', () => api.smUuidDecode(document.getElementById('base62-input').value.trim())));
+      document.querySelector('[data-action="random-encode"]').addEventListener('click', () => {
+        document.getElementById('uuid-input').value = api.uuidV4();
+        document.querySelector('[data-action="encode"]').click();
+      });
+      document.querySelector('[data-action="random-decode"]').addEventListener('click', () => {
+        document.getElementById('base62-input').value = api.smUuidV4();
+        document.querySelector('[data-action="decode"]').click();
+      });
+      const updateProfanity = () => run('check-result', () => api.uuidProfanityCheck(document.getElementById('check-input').value) ? '🤬 Profanity - Would not be generated' : '🙂 Looks OK... if not, fix it and open a PR');
+      document.querySelector('[data-action="check"]').addEventListener('click', updateProfanity);
+      document.getElementById('check-input').addEventListener('input', updateProfanity);
+
+      document.querySelectorAll('[data-copy]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          const value = result(button.dataset.copy).textContent;
+          if (!value) return;
+          await navigator.clipboard.writeText(value);
+          const original = button.textContent;
+          button.textContent = 'Copied';
+          setTimeout(() => { button.textContent = original; }, 1200);
+        });
+      });
+
+      updateProfanity();
+    </script>
+  </body>
+</html>

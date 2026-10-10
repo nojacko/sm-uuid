@@ -4,6 +4,8 @@ A zero-dependency, cross-platform Base62 UUID v7 and v4 library with smart profa
 
 Encodes 128-bit UUIDs into fixed 22-character Base62 strings that retain full lexicographical (chronological) sorting for UUID v7 while eliminating offensive words and common leet-speak substitutions.
 
+[Try the live demo](https://nojacko.github.io/sm-uuid/)
+
 ## Features
 
 - **Profanity Protection (`smUuidV7`, `smUuidV4`):** Automatically re-rolls matching IDs if they contain severe profanity or direct visual leet-speak replacements (e.g., `1` → `i`, `0` → `o`, `4` → `a`).
