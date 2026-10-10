@@ -120,6 +120,14 @@ describe('sm-uuid', () => {
     it('should throw error when decoding invalid Base62 character', () => {
       assert.throws(() => uuidDecode('040JcVpU9fE0000000000!'), /Invalid Base62 character/);
     });
+
+    it('should encode the maximum theoretical UUID to exactly 22 characters', () => {
+  const maxUuid = 'ffffffff-ffff-ffff-ffff-ffffffffffff';
+  const encoded = uuidEncode(maxUuid);
+
+  assert.equal(encoded.length, 22, encoded);
+  assert.equal(uuidDecode(encoded).toLowerCase(), maxUuid.toLowerCase());
+});
   });
 
   describe('smUuidV4', () => {
