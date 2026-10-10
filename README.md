@@ -46,14 +46,6 @@ const decoded = smUuidDecode(encoded);
 // -> "018e28f8-a000-7000-8000-000000000001"
 ```
 
-### Passing Custom Timestamps to UUID v7
-
-You can pass a custom Unix timestamp (in milliseconds) to both `uuidV7` and `smUuidV7`:
-
-```typescript
-const customTimeId = smUuidV7(1700000000000);
-```
-
 ## How the Profanity Filter Works
 
 When calling `smUuidV7()` or `smUuidV4()`, the output is checked against a targeted profanity regex. If a forbidden sequence is detected:
