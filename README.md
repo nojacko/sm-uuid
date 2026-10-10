@@ -71,7 +71,7 @@ This ensures generation completes in under a microsecond without high-CPU retry 
 npm run build
 ```
 
-### Lint / Formatting
+### Lint / Formatting
 
 ```bash
 npm run fmt
