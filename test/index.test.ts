@@ -10,6 +10,12 @@ import {
   uuidProfanityCheck,
 } from '../src/index.js';
 
+const UUID_V4_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_V7_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUIDS_TO_GENERATE = 10_000;
+
 describe('sm-uuid', () => {
   describe('uuidProfanityCheck', () => {
     it('should return true for comprehensive profanity list', () => {
@@ -72,20 +78,14 @@ describe('sm-uuid', () => {
   describe('uuidV4', () => {
     it('should generate valid standard UUID v4 strings', () => {
       const v4 = uuidV4();
-      assert.match(
-        v4,
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-      );
+      assert.match(v4, UUID_V4_REGEX);
     });
   });
 
   describe('uuidV7', () => {
     it('should generate valid standard UUID v7 strings', () => {
       const v7 = uuidV7();
-      assert.match(
-        v7,
-        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-      );
+      assert.match(v7, UUID_V7_REGEX);
     });
   });
 
@@ -143,24 +143,40 @@ describe('sm-uuid', () => {
   });
 
   describe('smUuidV4', () => {
-    it('should generate profanity-free 22-character Base62 string', () => {
-      const encoded = smUuidV4();
-      assert.equal(encoded.length, 22);
-      assert.equal(uuidProfanityCheck(encoded), false);
+    it("should encode and decode lots of unique profanity-free UUIDs", () => {
+      const encodedUuids = new Set<string>();
 
-      const decoded = smUuidDecode(encoded);
-      assert.match(
-        decoded,
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-      );
+      for (let i = 0; i < UUIDS_TO_GENERATE; i++) {
+        const encoded = smUuidV4();
+        assert.equal(encoded.length, 22);
+        assert.equal(uuidProfanityCheck(encoded), false);
+
+        const decoded = smUuidDecode(encoded);
+        assert.match(decoded, UUID_V4_REGEX);
+        assert.equal(smUuidEncode(decoded), encoded);
+        encodedUuids.add(encoded);
+      }
+
+      assert.equal(encodedUuids.size, UUIDS_TO_GENERATE);
     });
   });
 
   describe('smUuidV7', () => {
-    it('should generate profanity-free 22-character Base62 string', () => {
-      const encoded = smUuidV7();
-      assert.equal(encoded.length, 22);
-      assert.equal(uuidProfanityCheck(encoded), false);
+    it('should encode and decode lots of unique profanity-free UUIDs', () => {
+      const encodedUuids = new Set<string>();
+
+      for (let i = 0; i < UUIDS_TO_GENERATE; i++) {
+        const encoded = smUuidV7();
+        assert.equal(encoded.length, 22);
+        assert.equal(uuidProfanityCheck(encoded), false);
+
+        const decoded = smUuidDecode(encoded);
+        assert.match(decoded, UUID_V7_REGEX);
+        assert.equal(smUuidEncode(decoded), encoded);
+        encodedUuids.add(encoded);
+      }
+
+      assert.equal(encodedUuids.size, UUIDS_TO_GENERATE);
     });
 
     it('should maintain chronological lexicographical sort order', async () => {
