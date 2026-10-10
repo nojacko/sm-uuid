@@ -7,8 +7,43 @@ for (let i = 0; i < ALPHABET.length; i++) {
   CHAR_MAP.set(ALPHABET[i], BigInt(i));
 }
 
-// Focused regex matching severe profanity and direct '1' -> 'i' / '0' -> 'o' / '4' -> 'a' substitutions
-const PROFANITY_REGEX = /f[u1]ck|sh[i1]t|c[u1]nt|b[i1]tch|sl[u1]t|pr[i1]ck|f[a4]g|f[a4]gg0t|d[i1]ck|c[o0]ck|p[u1]ssy/i;
+const PROFANITY_PATTERNS = [
+  'a[r0]s[e3]', // arse
+  'a[s5]{2}', // ass
+  'b[a4]st[a4]rd', // bastard
+  'b[i1]tch', // bitch
+  'c[o0]ck', // cock
+  'c[u1]m', // cum
+  'c[u1]nt', // cunt
+  'ch[i1]nk', // chink
+  'd[i1]ck', // dick
+  'd[y1]k[e3]', // dyke
+  'f[a4]g', // fag
+  'f[u1]ck', // fuck
+  'j[i1]zz', // jizz
+  'k[i1]k[e3]', // kike
+  'k[i1]ll', // kill
+  'n[a4]z[i1]', // nazi
+  'n[i1]gg', // nigger / nigga
+  'n[o0]nc[e3]', // nonce
+  'p([a4]?[e3]|[a4])d[o0]', // pedo / paedo
+  'p[e3]n[i1]s', // penis
+  'p[i1][s5]{2}', // piss
+  'p[o0]rn', // porn
+  'p[u1]ssy', // pussy
+  'pr[i1]ck', // prick
+  'r[a4]p[e3i1]', // rape / rapist
+  'r[e3]t[a4]rd', // retard
+  'sh[i1]t', // shit
+  'sl[u1]t', // slut
+  'sp[i1]c', // spic
+  'su[i1]c[i1]d', // suicide / suicidal
+  'tw[a4]t', // twat
+  'w[a4]nk', // wank
+  'wh[o0]r[e3]', // whore
+];
+
+const PROFANITY_REGEX = new RegExp(PROFANITY_PATTERNS.join('|'), 'i');
 
 function getCrypto(): Crypto {
   if (typeof globalThis !== 'undefined' && globalThis.crypto) {
