@@ -24,8 +24,8 @@ npm install sm-uuid
 import {
   uuidV4,
   uuidV7,
-  uuidEncode,
-  uuidDecode,
+  smUuidEncode,
+  smUuidDecode,
   smUuidV4,
   smUuidV7,
 } from 'sm-uuid';
@@ -39,10 +39,10 @@ const standardV7 = uuidV7(); // "018e28f8-a000-7000-8000-000000000001"
 const standardV4 = uuidV4(); // "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
 // 3. Encode & Decode Base62 strings
-const encoded = uuidEncode('018e28f8-a000-7000-8000-000000000001');
+const encoded = smUuidEncode('018e28f8-a000-7000-8000-000000000001');
 // -> "040JcVpU9fE00000000001"
 
-const decoded = uuidDecode(encoded);
+const decoded = smUuidDecode(encoded);
 // -> "018e28f8-a000-7000-8000-000000000001"
 ```
 

@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {
   uuidV4,
   uuidV7,
-  uuidEncode,
-  uuidDecode,
+  smUuidEncode,
+  smUuidDecode,
   smUuidV4,
   smUuidV7,
   uuidProfanityCheck,
@@ -89,56 +89,56 @@ describe('sm-uuid', () => {
     });
   });
 
-  describe('uuidEncode & uuidDecode', () => {
+  describe('smUuidEncode & smUuidDecode', () => {
     it('should encode and decode UUID v4 roundtrip correctly', () => {
       const orig = uuidV4();
-      const encoded = uuidEncode(orig);
+      const encoded = smUuidEncode(orig);
       assert.equal(encoded.length, 22);
-      const decoded = uuidDecode(encoded);
+      const decoded = smUuidDecode(encoded);
       assert.equal(decoded.toLowerCase(), orig.toLowerCase());
     });
 
     it('should encode and decode UUID v7 roundtrip correctly', () => {
       const orig = uuidV7();
-      const encoded = uuidEncode(orig);
+      const encoded = smUuidEncode(orig);
       assert.equal(encoded.length, 22);
-      const decoded = uuidDecode(encoded);
+      const decoded = smUuidDecode(encoded);
       assert.equal(decoded.toLowerCase(), orig.toLowerCase());
     });
 
     it('should handle zero BigInt encoding correctly', () => {
       const zeroUuid = '00000000-0000-0000-0000-000000000000';
-      const encoded = uuidEncode(zeroUuid);
+      const encoded = smUuidEncode(zeroUuid);
       assert.equal(encoded, '0000000000000000000000');
-      assert.equal(uuidDecode(encoded), zeroUuid);
+      assert.equal(smUuidDecode(encoded), zeroUuid);
     });
 
     it('should throw error when encoding invalid UUID string', () => {
-      assert.throws(() => uuidEncode('invalid-uuid'), /Invalid UUID string/);
-      assert.throws(() => uuidEncode('12345'), /Invalid UUID string/);
+      assert.throws(() => smUuidEncode('invalid-uuid'), /Invalid UUID string/);
+      assert.throws(() => smUuidEncode('12345'), /Invalid UUID string/);
     });
 
     it('should throw error when decoding invalid length string', () => {
-      assert.throws(() => uuidDecode('too-short'), /Invalid encoded length/);
+      assert.throws(() => smUuidDecode('too-short'), /Invalid encoded length/);
       assert.throws(
-        () => uuidDecode('01234567890123456789012'),
+        () => smUuidDecode('01234567890123456789012'),
         /Invalid encoded length/,
       );
     });
 
     it('should throw error when decoding invalid Base62 character', () => {
       assert.throws(
-        () => uuidDecode('040JcVpU9fE0000000000!'),
+        () => smUuidDecode('040JcVpU9fE0000000000!'),
         /Invalid Base62 character/,
       );
     });
 
     it('should encode the maximum theoretical UUID to exactly 22 characters', () => {
       const maxUuid = 'ffffffff-ffff-ffff-ffff-ffffffffffff';
-      const encoded = uuidEncode(maxUuid);
+      const encoded = smUuidEncode(maxUuid);
 
       assert.equal(encoded.length, 22, encoded);
-      assert.equal(uuidDecode(encoded).toLowerCase(), maxUuid.toLowerCase());
+      assert.equal(smUuidDecode(encoded).toLowerCase(), maxUuid.toLowerCase());
     });
   });
 
@@ -148,7 +148,7 @@ describe('sm-uuid', () => {
       assert.equal(encoded.length, 22);
       assert.equal(uuidProfanityCheck(encoded), false);
 
-      const decoded = uuidDecode(encoded);
+      const decoded = smUuidDecode(encoded);
       assert.match(
         decoded,
         /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,

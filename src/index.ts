@@ -155,18 +155,18 @@ export function uuidV7(): string {
   return bigIntToUuid(bytesToBigInt(buildV7Bytes(ts, rand)));
 }
 
-export function uuidEncode(uuid: string): string {
+export function smUuidEncode(uuid: string): string {
   return bigIntToBase62(uuidToBigInt(uuid));
 }
 
-export function uuidDecode(encoded: string): string {
+export function smUuidDecode(encoded: string): string {
   return bigIntToUuid(base62ToBigInt(encoded));
 }
 
 export function smUuidV4(): string {
-  let encoded = uuidEncode(uuidV4());
+  let encoded = smUuidEncode(uuidV4());
   while (uuidProfanityCheck(encoded)) {
-    encoded = uuidEncode(uuidV4());
+    encoded = smUuidEncode(uuidV4());
   }
   return encoded;
 }
