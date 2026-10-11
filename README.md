@@ -50,10 +50,10 @@ const decoded = smUuidDecode(encoded);
 
 When calling `smUuidV7()` or `smUuidV4()`, the output is checked against a targeted profanity regex. If a forbidden sequence is detected:
 
-1. **UUID v7:** Tnly the random bytes are regenerated and the original timestamp is reused. Base the final value is created by interleaving the timestamp and random halves, the new random bytes will change every other character preventing profanities from the timestamp bytes.
+1. **UUID v7:** Since the final value is created by interleaving the timestamp and random halves, only the random bytes are regenerated and the original timestamp is kept. This leads to every other character changing, allowing previous profanities to be removed.
 2. **UUID v4:** The entire UUID is generated again because all of its data is random.
 
-This ensures generation completes in under a microsecond without high-CPU retry loops.
+This ensures generation remains fast without high-CPU heavy retry loops.
 
 ## Development & Building
 
