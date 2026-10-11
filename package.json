@@ -1,6 +1,6 @@
 {
   "name": "sm-uuid",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Zero-dependency browser & node Base62 UUID v7 and v4 generator with profanity protection",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
