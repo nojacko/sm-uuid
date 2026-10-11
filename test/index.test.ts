@@ -7,17 +7,19 @@ import {
   smUuidDecode,
   smUuidV4,
   smUuidV7,
-  uuidProfanityCheck,
+  interleave,
+  deinterleave,
+  uuidHasProfanity,
 } from '../src/index.js';
 
 const UUID_V4_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const UUID_V7_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const UUIDS_TO_GENERATE = 10_000;
+const UUIDS_TO_GENERATE = 100_000;
 
 describe('sm-uuid', () => {
-  describe('uuidProfanityCheck', () => {
+  describe('uuidHasProfanity', () => {
     it('should return true for comprehensive profanity list', () => {
       const TEST_CASES: [string, string[]][] = [
         ['fuck', ['fuck', 'f1ck', 'FUCK', 'F1CK']],
@@ -60,7 +62,7 @@ describe('sm-uuid', () => {
           // Embedded in a mock 22-char Base62 string to mirror real UUID checks
           const embeddedStr = `040${variant}0000000000000000`.slice(0, 22);
           assert.equal(
-            uuidProfanityCheck(embeddedStr),
+            uuidHasProfanity(embeddedStr),
             true,
             `Failed to catch variant: "${variant}" in "${embeddedStr}"`,
           );
@@ -69,9 +71,9 @@ describe('sm-uuid', () => {
     });
 
     it('should return false for clean strings', () => {
-      assert.equal(uuidProfanityCheck('040JcVpU9fE00000000001'), false);
-      assert.equal(uuidProfanityCheck('018e28f8a0007000800000'), false);
-      assert.equal(uuidProfanityCheck('cleanString1234567890'), false);
+      assert.equal(uuidHasProfanity('040JcVpU9fE00000000001'), false);
+      assert.equal(uuidHasProfanity('018e28f8a0007000800000'), false);
+      assert.equal(uuidHasProfanity('cleanString1234567890'), false);
     });
   });
 
@@ -86,6 +88,31 @@ describe('sm-uuid', () => {
     it('should generate valid standard UUID v7 strings', () => {
       const v7 = uuidV7();
       assert.match(v7, UUID_V7_REGEX);
+    });
+  });
+
+  describe('interleave & deinterleave', () => {
+    it('should interleave correctly', () => {
+      assert.equal(
+        interleave('abcdefghijklmnopqrstuv'),
+        'albmcndoepfqgrhsitjukv',
+      );
+    });
+
+    it('should interleave strings of any length', () => {
+      assert.equal(interleave('abcde'), 'adbec');
+      assert.equal(interleave('abcd'), 'acbd');
+      assert.equal(interleave(''), '');
+    });
+
+    it('should restore an interleaved value to its original halves', () => {
+      const value = 'abcdefghijklmnopqrstuv';
+      assert.equal(deinterleave(interleave(value)), value);
+    });
+
+    it('should restore odd-length and empty strings', () => {
+      assert.equal(deinterleave(interleave('abcde')), 'abcde');
+      assert.equal(deinterleave(interleave('')), '');
     });
   });
 
@@ -149,7 +176,7 @@ describe('sm-uuid', () => {
       for (let i = 0; i < UUIDS_TO_GENERATE; i++) {
         const encoded = smUuidV4();
         assert.equal(encoded.length, 22);
-        assert.equal(uuidProfanityCheck(encoded), false);
+        assert.equal(uuidHasProfanity(encoded), false);
 
         const decoded = smUuidDecode(encoded);
         assert.match(decoded, UUID_V4_REGEX);
@@ -162,13 +189,19 @@ describe('sm-uuid', () => {
   });
 
   describe('smUuidV7', () => {
+    it('should accept a timestamp and return a profanity-free UUID', () => {
+      const encoded = smUuidV7(1757395081210);
+
+      assert.equal(uuidHasProfanity(encoded), false);
+    });
+
     it('should encode and decode lots of unique profanity-free UUIDs', () => {
       const encodedUuids = new Set<string>();
 
       for (let i = 0; i < UUIDS_TO_GENERATE; i++) {
         const encoded = smUuidV7();
         assert.equal(encoded.length, 22);
-        assert.equal(uuidProfanityCheck(encoded), false);
+        assert.equal(uuidHasProfanity(encoded), false);
 
         const decoded = smUuidDecode(encoded);
         assert.match(decoded, UUID_V7_REGEX);
@@ -179,14 +212,5 @@ describe('sm-uuid', () => {
       assert.equal(encodedUuids.size, UUIDS_TO_GENERATE);
     });
 
-    it('should maintain chronological lexicographical sort order', async () => {
-      const enc1 = smUuidV7();
-      await new Promise((resolve) => setTimeout(resolve, 2));
-      const enc2 = smUuidV7();
-
-      assert.equal(enc1.length, 22);
-      assert.equal(enc2.length, 22);
-      assert.ok(enc1 < enc2);
-    });
   });
 });

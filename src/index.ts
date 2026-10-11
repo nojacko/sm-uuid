@@ -134,11 +134,29 @@ function bytesToBigInt(bytes: Uint8Array): bigint {
   return BigInt(`0x${hex}`);
 }
 
-/**
- * Checks if a given string contains profanity according to the internal blocklist.
- * Returns true if profanity is detected, false otherwise.
- */
-export function uuidProfanityCheck(str: string): boolean {
+export function interleave(s: string): string {
+  const midpoint = Math.ceil(s.length / 2);
+  const firstHalf = s.slice(0, midpoint);
+  const secondHalf = s.slice(midpoint);
+  let result = '';
+  for (let i = 0; i < midpoint; i++) {
+    result += firstHalf[i];
+    if (i < secondHalf.length) result += secondHalf[i];
+  }
+  return result;
+}
+
+export function deinterleave(s: string): string {
+  let firstHalf = '';
+  let secondHalf = '';
+  for (let i = 0; i < s.length; i += 2) {
+    firstHalf += s[i];
+    if (i + 1 < s.length) secondHalf += s[i + 1];
+  }
+  return firstHalf + secondHalf;
+}
+
+export function uuidHasProfanity(str: string): boolean {
   return PROFANITY_REGEX.test(str);
 }
 
@@ -156,34 +174,30 @@ export function uuidV7(): string {
 }
 
 export function smUuidEncode(uuid: string): string {
-  return bigIntToBase62(uuidToBigInt(uuid));
+  return interleave(bigIntToBase62(uuidToBigInt(uuid)));
 }
 
 export function smUuidDecode(encoded: string): string {
-  return bigIntToUuid(base62ToBigInt(encoded));
+  return bigIntToUuid(base62ToBigInt(deinterleave(encoded)));
 }
 
 export function smUuidV4(): string {
   let encoded = smUuidEncode(uuidV4());
-  while (uuidProfanityCheck(encoded)) {
+  while (uuidHasProfanity(encoded)) {
     encoded = smUuidEncode(uuidV4());
   }
   return encoded;
 }
 
-export function smUuidV7(): string {
-  let timestamp = Date.now();
+export function smUuidV7(timestamp = Date.now()): string {
   let rand = getRandomBytes(10);
-  let encoded = bigIntToBase62(bytesToBigInt(buildV7Bytes(timestamp, rand)));
+  let bytes = buildV7Bytes(timestamp, rand);
+  let encoded = smUuidEncode(bigIntToUuid(bytesToBigInt(bytes)));
 
-  while (uuidProfanityCheck(encoded)) {
-    const match = PROFANITY_REGEX.exec(encoded);
-    if (match && match.index < 8) {
-      timestamp += 1;
-    } else {
-      rand = getRandomBytes(10);
-    }
-    encoded = bigIntToBase62(bytesToBigInt(buildV7Bytes(timestamp, rand)));
+  while (uuidHasProfanity(encoded)) {
+    rand = getRandomBytes(10);
+    bytes = buildV7Bytes(timestamp, rand);
+    encoded = smUuidEncode(bigIntToUuid(bytesToBigInt(bytes)));
   }
 
   return encoded;
