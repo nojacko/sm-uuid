@@ -25,7 +25,7 @@ const PROFANITY_PATTERNS = [
   'k[i1]k[e3]', // kike
   'k[i1]ll', // kill
   'n[a4]z[i1]', // nazi
-  'n[i1]gg', // nigger / nigga
+  'n[i1]gg', // n-word
   'n[o0]nc[e3]', // nonce
   'p([a4]?[e3]|[a4])d[o0]', // pedo / paedo
   'p[e3]n[i1]s', // penis
