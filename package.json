@@ -17,9 +17,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run build:esm && npm run build:cjs",
+    "build": "npm run build:esm && npm run build:cjs && npm run build:minify",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+    "build:minify": "terser dist/esm/index.js --compress --mangle --comments false --output dist/esm/index.min.js && terser dist/cjs/index.js --compress --mangle --comments false --output dist/cjs/index.min.js",
     "test": "node --import tsx --test test/**/*.test.ts",
     "fmt": "prettier --write . && eslint . --fix"
   },
@@ -49,6 +50,7 @@
     "eslint-config-prettier": "^10.0.0",
     "globals": "^16.0.0",
     "prettier": "^3.0.0",
+    "terser": "^5.44.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.0.0"
