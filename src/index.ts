@@ -13,19 +13,26 @@ const PROFANITY_PATTERNS = [
   'a[s5]{2}', // ass
   'b[a4]st[a4]rd', // bastard
   'b[i1]tch', // bitch
+  'c[l1][i1]t', // clit
   'c[o0]ck', // cock
+  'c[o0][o0]n', // coon
   'c[u1]m', // cum
   'c[u1]nt', // cunt
   'ch[i1]nk', // chink
+  'd[a4]mn', // damn
   'd[i1]ck', // dick
+  'd[i1]ld[o0]', // dildo
   'd[y1]k[e3]', // dyke
   'f[a4]g', // fag
+  'f[a4]g[g0]t', // faggot
   'f[u1]ck', // fuck
+  'j[a4]ck[a4]ss', // jackass
   'j[i1]zz', // jizz
   'k[i1]k[e3]', // kike
   'k[i1]ll', // kill
+  'm[a4]st[u1]rb[a4]t', // masturbate
   'n[a4]z[i1]', // nazi
-  'n[i1]gg', // n-word
+  'n[i1]g', // n-word
   'n[o0]nc[e3]', // nonce
   'p([a4]?[e3]|[a4])d[o0]', // pedo / paedo
   'p[e3]n[i1]s', // penis
@@ -39,8 +46,11 @@ const PROFANITY_PATTERNS = [
   'sl[u1]t', // slut
   'sp[i1]c', // spic
   'su[i1]c[i1]d', // suicide / suicidal
+  't[i1]t', // tit
   'tw[a4]t', // twat
+  'v[a4]g[i1]n[a4]', // vagina
   'w[a4]nk', // wank
+  'w[e3]tb[a4]ck', // wetback
   'wh[o0]r[e3]', // whore
 ];
 

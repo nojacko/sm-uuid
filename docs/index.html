@@ -83,6 +83,7 @@
       .result.success { color: var(--ink); background: #0f3218; border-color: #3fae58; }
       .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; }
       .actions button { width: 100%; }
+      .random-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
       input, button {
         box-sizing: border-box;
         height: var(--control-height);
@@ -200,8 +201,9 @@
             <div class="result-row">
               <input class="result result-encode copyable" id="encode-result" aria-live="polite" aria-label="Copy encoded UUID" data-copy readonly />
             </div>
-            <div class="actions">
-              <button type="button" class="secondary" data-action="random-encode">Random</button>
+            <div class="actions random-actions">
+              <button type="button" class="secondary" data-action="random-encode-v7">Random V7</button>
+              <button type="button" class="secondary" data-action="random-encode-v4">Random V4</button>
             </div>
           </article>
 
@@ -215,8 +217,9 @@
             <div class="result-row">
               <input class="result result-decode copyable" id="decode-result" aria-live="polite" aria-label="Copy decoded UUID" data-copy readonly />
             </div>
-            <div class="actions">
-              <button type="button" class="secondary" data-action="random-decode">Random</button>
+            <div class="actions random-actions">
+              <button type="button" class="secondary" data-action="random-decode-v7">Random V7</button>
+              <button type="button" class="secondary" data-action="random-decode-v4">Random V4</button>
             </div>
           </article>
 
@@ -278,16 +281,20 @@
       document.querySelector('[data-action="v4"]').addEventListener('click', () => run('v4-result', api.smUuidV4));
       document.querySelector('[data-action="encode"]').addEventListener('click', () => run('encode-result', () => api.smUuidEncode(document.getElementById('uuid-input').value.trim())));
       document.querySelector('[data-action="decode"]').addEventListener('click', () => run('decode-result', () => api.smUuidDecode(document.getElementById('base62-input').value.trim())));
-      document.querySelector('[data-action="random-encode"]').addEventListener('click', () => {
-        document.getElementById('uuid-input').value = api.uuidV4();
+      const randomEncode = (generator) => {
+        document.getElementById('uuid-input').value = generator();
         document.querySelector('[data-action="encode"]').click();
-      });
-      document.querySelector('[data-action="random-decode"]').addEventListener('click', () => {
-        document.getElementById('base62-input').value = api.smUuidV4();
+      };
+      document.querySelector('[data-action="random-encode-v7"]').addEventListener('click', () => randomEncode(api.uuidV7));
+      document.querySelector('[data-action="random-encode-v4"]').addEventListener('click', () => randomEncode(api.uuidV4));
+      const randomDecode = (generator) => {
+        document.getElementById('base62-input').value = generator();
         document.querySelector('[data-action="decode"]').click();
-      });
+      };
+      document.querySelector('[data-action="random-decode-v7"]').addEventListener('click', () => randomDecode(api.smUuidV7));
+      document.querySelector('[data-action="random-decode-v4"]').addEventListener('click', () => randomDecode(api.smUuidV4));
       const updateProfanity = () => {
-        const isProfane = api.uuidProfanityCheck(document.getElementById('check-input').value);
+        const isProfane = api.uuidHasProfanity(document.getElementById('check-input').value);
         show('check-result', isProfane ? '🤬 Profanity - Would not be generated' : '🙂 Looks OK... if not, fix it and open a PR', isProfane);
         if (!isProfane) result('check-result').classList.add('success');
       };
